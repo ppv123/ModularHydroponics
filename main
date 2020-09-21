@@ -12,6 +12,9 @@ def initKit():
     print("lux want: ")
     wantdata['lux'] = int(input())
 
+    print("waterLv want: ")
+    wantdata['waterLv'] = float(input())
+    
     print("ph want: ")
     wantdata['ph'] = float(input())
 
@@ -28,10 +31,11 @@ def dataUpdate():
     f = open("./nowdata.txt", 'w')
 
     nowdata['lux'] = sensing.getLux()
+    nowdata['waterLv'] = sensing.getWaterLv()
     nowdata['ph'] = sensing.getPh()
     nowdata['temp'] = sensing.getTemp()
     nowdata['hum'] = sensing.getHum()
-    nowdata['waterLv'] = sensing.getWaterLv()
+
 
     while (i < numModule):
         f.write("%f\n" %nowdata[i])
