@@ -1,27 +1,64 @@
-class PotData:
-    def __init__(self): #생성자
-        self.nowdata = dict(lux = 1.0, ph = 3.0, temp = 20.0, hum = 15.0)
-        self.wantdata = dict(lux = 4.0, ph = 7.0, temp = 2.0, hum = 1.0)
+import actuating
+import sensing
 
-    # def initKit():
+import time
 
-    def moduleAct(self):
-        if (self.nowdata['lux'] < self.wantdata['lux']):
-            machineAct.led(self)
-        if (self.nowdata['ph'] < self.wantdata['ph']):
-            machineAct.valve(self)
+nowdata = {'lux':0, 'ph':0.0, 'temp':0.0, 'hum' : 0.0}
+wantdata = {'lux':0, 'ph':0.0, 'temp':0.0, 'hum' : 0.0}
 
-def main():  # 메인 함수
 
-    pot = PotData()
+def initKit():
 
-    #initKit() //i2c 통신으로 센서 고유식별번호 받기
+    print("lux want: ")
+    wantdata['lux'] = int(input())
 
-    while (True):
-        for value in pot.nowdata:
-            print("now", value, pot.nowdata[value])
-            if (pot.nowdata[value] != pot.wantdata[value]):
-                pot.moduleAct()
-        time.sleep(3)
+    print("ph want: ")
+    wantdata['ph'] = float(input())
+
+    print("temp want: ")
+    wantdata['temp'] = float(input())
+
+    print("hum want: ")
+    wantdata['hum'] = float(input())
+
+
+def dataUpdate():
+    global nowdata
+    i = 0
+    f = open("./nowdata.txt", 'w')
+
+    nowdata['lux'] = sensing.getLux()
+    nowdata['ph'] = sensing.getPh()
+    nowdata['temp'] = sensing.getTemp()
+    nowdata['hum'] = sensing.getHum()
+    nowdata['waterLv'] = sensing.getWaterLv()
+
+    while (i < numModule):
+        f.write("%f\n" %nowdata[i])
+        i += 1
+
+    f.close()
+
+def moduleAct():
+
+    if(nowdata['lux'] < wantdata['lux']):
+        actuating.led()
+
+    if(nowdata['waterLv'] < wantdata['waterLv']):
+        actuating.buzzer()
+
+    if(nowdata['ph'] < wantdata['ph']):
+        actuating.valve()
+
+
+def main():
+    global nowdata
+    global wantdata
+
+    while(True):
+        dataUpdate()
+        if (nowdata != wantdata):
+            moduleAct()
+        time.sleep(300)  #5분 주기로 반복
 
 main()
