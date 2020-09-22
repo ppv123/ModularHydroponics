@@ -51,7 +51,7 @@ class PotData:
 
 
 def main():
-    pot = PotData
+    pot = PotData()
 
     while True:
         pot.dataSensing()
