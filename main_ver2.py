@@ -27,7 +27,6 @@ class PotData:
 
 
     def dataSensing(self):
-
         f = open("./nowdata.txt", 'w')
 
         self.nowData['lux'] = sensing.getLux()
@@ -36,6 +35,9 @@ class PotData:
         self.nowData['temp'] = sensing.getTemp()
         self.nowData['hum'] = sensing.getHum()
 
+        data = "%d temp, %d hum, %d lux" %(sensing.getTemp(), sensing.getHum(), sensing.getLux())
+        f.write(data)
+        
         f.close()
 
 
