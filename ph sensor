@@ -1,0 +1,10 @@
+import smbus
+import time
+
+bus = smbus.SMBus(1)
+address3 = 0x04
+
+data = bus.read_byte(address3);
+data = data/10
+print("ph is ", data)
+## 딱 한번만 ph 찾는 거고 저기서 10나눈 이유가 i2c로 바이트 단위로 보내니까 소수점이 안나와서 애초에 전송할떄 10곱하고 받을때 10나눳습니다.
