@@ -16,8 +16,10 @@ ONETIME_H_RES_MODE2 = 0x21
 ONETIME_L_RES_MODE = 0x23
 '''
 
-i2c = smbus.SMBus(I2C_CH)   # pcf8574 io expansion board 제품 확인
+bus = smbus.SMBus(1)
+address3 = 0x04
 
+i2c2 = smbus.SMBus(I2C_CH)   # pcf8574 io expansion board 제품 확인
 i2c = busio.I2C(board.SCL, board.SDA)
 am = adafruit_am2320.AM2320(i2c)
 
@@ -29,7 +31,9 @@ def getLux():
 
 
 def getPh():
-	#아날로그 데이터를 뽑아오는 코드 연구 중
+	ph = bus.read_byte(address3);
+	ph = ph/10
+	
 	return ph
 
 
