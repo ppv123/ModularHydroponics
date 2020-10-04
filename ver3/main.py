@@ -15,7 +15,6 @@ class PotData:
 
 def main():
     while True:
-        pot = PotData()
         address = recognition.check()
         pot = PotData()
 
