@@ -4,7 +4,10 @@
 #define GREEN 6
 #define BLUE 3
 
+
 int number = 0;
+
+
 void setup(void) {
   pinMode(RED, OUTPUT);
   pinMode(GREEN, OUTPUT);
@@ -18,26 +21,34 @@ void setup(void) {
   analogWrite(GREEN, 255);
   analogWrite(BLUE, 255);
 }
-  
+
+
 void loop(){
+
 }
+
+
 void receiveData(int byteCount){
 
-while(Wire.available()) {
-number = Wire.read();
-Serial.print("data received: ");
-Serial.println(number);
-if (number == 1){
-  analogWrite(RED, 0);
-  analogWrite(GREEN, 0);
-  analogWrite(BLUE, 0);
-  Serial.println("불이 켜집니다");
-}
-else if (number == 2){
-  analogWrite(RED, 255);
-  analogWrite(GREEN, 255);
-  analogWrite(BLUE, 255);
-  Serial.println("불이 꺼집니다.");
-}
-}
+  while(Wire.available()) {
+    number = Wire.read();
+    Serial.print("data received: ");
+    Serial.println(number);
+
+    if (number == 1){
+      analogWrite(RED, 0);
+      analogWrite(GREEN, 0);
+      analogWrite(BLUE, 0);
+      Serial.println("불이 켜집니다");
+    }
+
+    else if (number == 2){
+      analogWrite(RED, 255);
+      analogWrite(GREEN, 255);
+      analogWrite(BLUE, 255);
+      Serial.println("불이 꺼집니다.");
+    }
+
+  }
+
 }
