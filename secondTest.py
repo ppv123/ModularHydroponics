@@ -20,7 +20,7 @@ class PotData:
                 try:
                     bus.write_byte(j, 0)
                     self.address[j] = hex(j)
-                except():
+                except:
                     pass
         return self.address  # = {'lux': 0x04, 'tempHum': 0x08, 'ph': 0x10}
 
@@ -40,8 +40,9 @@ class PotData:
 
 
 def main():
+    pot = PotData()
+    
     while True:
-        pot = PotData()
         pot.initI2C()  # return self.address
         pot.getType(pot.address)  # return self.module_type
 
