@@ -27,5 +27,4 @@ def main():
         time.sleep(5)  # 5초 주기로 반복
 
 
-if __name__ == "__main__":
-    main()
+main()
