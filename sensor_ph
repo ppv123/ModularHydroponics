@@ -11,28 +11,35 @@ int pHArray[ArrayLenth];   //Store the average value of the sensor feedback
 int pHArrayIndex=0;   
 int number = 0;
 int state = 0;
-int instr_number = 0;
+int instr_number[4] = {0,0,0,0};
 
-void setup() {
-  // put your setup code here, to run once:
-  pinMode(LED,OUTPUT);  
-  Serial.begin(9600);  
-  Wire.begin(SLAVE_ADDRESS);
-  
-
-      //Test the serial monitor
+void setup(void)
+{
+	  pinMode(LED,OUTPUT);  
+	  Serial.begin(9600);  
+	  Wire.begin(SLAVE_ADDRESS);
+	  
+  Serial.println("I2C Ready!");
+  Serial.println("pH meter experiment!");    //Test the serial monitor
 }
+void loop(void)
+{
+    static unsigned long samplingTime = millis();
+    static unsigned long printTime = millis();
+    static float pHValue,voltage;
+	Wire.onReceive(instrNum);
 
-void loop() {
-  // put your main code here, to run repeatedly:
-  static unsigned long samplingTime = millis();
-      static unsigned long printTime = millis();
-  static float pHValue,voltage;
-  Wire.onReceive(instrNum);
+	if (instr_number == 1) {
+		Wire.onRequest(sendData);
+	}
+	else {
+		Wire.onRequest(sendType);
+	}
   if(millis()-samplingTime > samplingInterval)
   {
       pHArray[pHArrayIndex++]=analogRead(SensorPin);
-      if(pHArrayIndex==ArrayLenth)pHArrayIndex=0;
+     
+	  if(pHArrayIndex==ArrayLenth)pHArrayIndex=0;
       voltage = avergearray(pHArray, ArrayLenth)*5.0/1024;
       pHValue = 3.5*voltage+Offset;
       samplingTime=millis();
@@ -45,14 +52,6 @@ void loop() {
         digitalWrite(LED,digitalRead(LED)^1);
         printTime=millis();
   }
-  if(instr_number == 1){
-    Wire.onRequest(sendData);
-  }
-  else{
-    Wire.onRequest(sendType);
-  }
-  Serial.println("I2C Ready!");
-  Serial.println("pH meter experiment!");
 }
 
 double avergearray(int* arr, int number){
@@ -95,7 +94,8 @@ double avergearray(int* arr, int number){
   return avg;
 }
 byte instrNum(int byteCount){
-    instr_number = Wire.read();
+  for (int i; i < byteCount; i++)
+    instr_number[i] = Wire.read();
   return instr_number;
 }
 
@@ -109,4 +109,5 @@ void sendData(){
 }
 void sendType() {
   int type = 1;
-  Wire.write((int)type);}
+  Wire.write((int)type);
+}
