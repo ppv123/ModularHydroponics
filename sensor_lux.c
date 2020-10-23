@@ -29,6 +29,6 @@ void sendData() {
   Wire.write((int)data);
 }
 void sendType() {
-  int type  = 1	// ¼¾¼­ ¸ðµâ
+  int type  = 1	// Â¼Â¾Â¼Â­ Â¸Ã°ÂµÃ¢
   Wire.write((int)type);
 }
