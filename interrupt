@@ -1,0 +1,28 @@
+import smbus
+import RPi.GPIO as GPIO
+import time
+
+bus = smbus.SMBus(1)
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(16, GPIO.IN)
+
+def initI2C(self):
+    address = {}
+
+    for j in range(128):
+        try:
+            bus.write_byte(j, 0)
+            address[j] = hex(j)
+        except:
+            pass
+
+    for i in address.keys():
+        print("%s %s" % (i, address[i]))
+        
+GPIO.add_event_detect(16, GPIO.RISING, callback = initI2C, bouncetime = 200)
+while True: //이 부분은 제대로 돌아가는지 확인하려고 루프문을 만든것이니 while문 나중에 지우면 됩니다
+    try:
+        time.sleep(5)
+    except KeyboardInterrupt:
+        GPIO.cleanup()
+        break
