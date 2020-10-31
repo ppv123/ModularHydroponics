@@ -36,7 +36,9 @@ class PotData:
                 self.module_type[self.module_type[i]] = 'sensing'
             elif type_send == 2:
                 self.module_type[self.module_type[i]] = 'actuating'
-                bus.write_byte(self.module_type[i], self.wantData[i])
+                self.bus.write_byte(self.module_type[i], self.wantData[i])
+                self.bus.write_byte(self.moduletype[i], self.nowData[i])
+                self.bus.write_byte(self.moduletype[i], 0)
 
         # return self.module_type
 
@@ -65,8 +67,8 @@ def main():
         GPIO.add_event_detect(3, GPIO.FALLING, callback=restart, bouncetime=1000)
 
         pot.initI2C()  # return self.address
-        pot.getType()  # return self.module_type
         pot.action()   # return self.nowData or acting
+        pot.getType()  # return self.module_type
 
         for i in pot.address.keys():
             print("%s %s" % (i, pot.address[i]))
