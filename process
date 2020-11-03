@@ -1,0 +1,36 @@
+1. 라즈베리on ()
+	//키트 본체 전원 스위치 누름
+	//main : 5초 주기
+
+2. 아두이노on (없어도 3번으로 넘어감)
+	//GPIO
+	
+3. CLI on	(1602 LCD)
+	// 1602로 초기 메뉴 출력 (control, monitoring, module status)
+	// 키패드(방향키 혹은 숫자키)로 선택
+	1) control
+		//키패드(방향키 혹은 숫자키)로 선택(set target data, add task, control mode)
+		a. target data
+			//initI2C를 통해 'actuating' 확인됐을 때만 선택작동
+			*제어 알고리즘 with Time: on condition
+
+		b. control mode
+			//키패드로 토글 입력
+			//자동 <-> 수동 변경
+		
+	2) monitoring
+		//LCD에 출력: 키패드로 목록 확인 
+		a. sensor module
+			lux: 데이터 수신
+			temp: 데이터 수신
+			ph: 데이터 수신
+			//위 데이터들 모두 main에 입력된 주기(5초)마다 최신화
+			
+		b. actuating module
+			led: x(on
+			pump: x(off
+			//위 데이터들 모두 main에 입력된 주기(5초)마다 최신화
+			
+4. shut down
+	//키트 본체 전원 스위치 누름
+	
