@@ -54,6 +54,9 @@ class OperationQueue:
             self.stopmainloop = True
             #self.t.join()
 
+    def flush(self):
+        self.queue.clear()
+
 
 
 

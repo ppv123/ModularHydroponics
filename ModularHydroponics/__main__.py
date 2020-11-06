@@ -1,4 +1,4 @@
-from ModularHydroponics.ModularHydroponics import interface, menu, taskmanage, modulecontrol
+from ModularHydroponics.ModularHydroponics import interface, menu, taskmanage#, modulecontrol
 import time
 import random
 
@@ -10,16 +10,19 @@ def menu_setup(**kwargs):
 
     #최상위
     mainMenu = menu.Menu("Main", 0)
-    controlMenu = menu.SubMenu("Control", 1, mainMenu)
-    monMenu = menu.SubMenu("Monitoring", 2, mainMenu)
-    moduleMenu = menu.SubMenu("Module Status", 3, mainMenu)
+    controlMenu = menu.SubMenu("Control", 1, mainMenu)  #1
+    monMenu = menu.SubMenu("Monitoring", 2, mainMenu)   #2
+    #moduleMenu = menu.SubMenu("Module Status", 3, mainMenu) #3
 
     #1.control
     targetval = menu.ExecOption("Set target value", 1, controlMenu, function=testfunction, para1=para1)
-    addtask = menu.ExecOptionQ("add task", 2, controlMenu, function=somei2c_operation, opq=q, n=n)
-    autocontrol = menu.ToggleOption("control mode", 3, controlMenu, function=startq, function2=stopq, opq=q, trueopt='Running', falseopt='Stopped')
+    mancontrol = menu.SubMenu("Control Manually", 2, controlMenu)
+    autocontrol = menu.ToggleOption("control mode", 3, controlMenu, function=startq, function2=stopq,
+                                    opq=q, trueopt='Running', falseopt='Stopped')
 
-    #2.monitoring
+    #2. monitoring
+    sensorstat = menu.ExecOption("Sensor Modules", 1, monMenu, function='')
+    actustat = menu.ExecOption("Actuator Modules", 2, monMenu, function='')
 
     return mainMenu
 
@@ -54,10 +57,10 @@ interface.cmd_line(menu_setup, q=autoconq, para1='just for test', n=15)
     1.control
         1) target value
         2) auto/manual
-        3) 
+        3) manual mode scheduling
     2.monitoring
         1) 
     3.module status
         -> show category(actuator / sensor), i2c address
-    4.
+    4.web status
 '''

@@ -1,6 +1,5 @@
 import sys
 import traceback
-
 import os
 
 
@@ -15,7 +14,7 @@ class Menu(object):
     def run(self):
         self.menu_listing()
 
-    def is_top(self):
+    def istop(self):
         return self.title == self.prevMenu.title and self.menuIndex == self.prevMenu.menuIndex
 
     def menu_listing(self):

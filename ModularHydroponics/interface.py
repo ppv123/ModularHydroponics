@@ -76,7 +76,7 @@ def handleoption(cmd, men):
             return men
 
     elif cmd.isdecimal() and int(cmd) == 0:
-        if not men.is_top():
+        if not men.istop():
             print('back to prevmenu')
             men.prevMenu.run()
             return men.prevMenu
