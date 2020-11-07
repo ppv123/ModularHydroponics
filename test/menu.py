@@ -11,8 +11,8 @@ class Menu(object):
         self.title = title
         self.menuIndex = index
         self.prevMenu = self
-        self.subMenuObj = []  # 하위메뉴 목록 리스트들(딕셔너리 타입)
-        self.display = LCD_driver.lcd()  # lcd 클래스의 인스턴스: display
+        self.subMenuObj = []
+        self.display = LCD_driver.lcd()
 
     def lcd_write(self, display, text='', num_line=1, num_cols=15):
         if (len(text) > num_cols):
@@ -31,7 +31,7 @@ class Menu(object):
     def is_top(self):
         return self.title == self.prevMenu.title and self.menuIndex == self.prevMenu.menuIndex
 
-    def menu_listing(self):  # 메뉴들을 화면에 표시
+    def menu_listing(self):
         print('\n')
         for i in range(len(self.title) + 48):
             print("=", end='')
@@ -48,7 +48,6 @@ class Menu(object):
                 print('  >>  Status / ', self.subMenuObj[i].getstatus())
             else:
                 print('')
-        # 아래는 '0 - Back' 출력
         for i in range(len(self.title) + 48):
             print("=", end='')
         print("\n0 - Back")
