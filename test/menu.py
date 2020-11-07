@@ -17,11 +17,10 @@ class Menu(object):
     def lcd_write(self, display, text='', num_line=1, num_cols=15):
         if (len(text) > num_cols):
             display.lcd_display_string(text[:num_cols], num_line)
-            time.sleep(1)
             for i in range(len(text) - num_cols + 1):
                 text_to_print = text[i:i + num_cols]
                 display.lcd_display_string(text_to_print, num_line)
-                time.sleep(0.2)
+                time.sleep(0.1)
             time.sleep(1)
         else:
             display.lcd_display_string(text, num_line)
@@ -37,12 +36,14 @@ class Menu(object):
         for i in range(len(self.title) + 48):
             print("=", end='')
         print("\n", self.title)
+        self.display.lcd_clear()
         self.lcd_write(self.display, self.title, 1)
         for i in range(len(self.title) + 48):
             print("=", end='')
         print("")
         for i in range(self.subMenuObj.__len__()):
             print(self.subMenuObj[i].menuIndex, ' - ', self.subMenuObj[i].title, end='')
+            self.lcd_write(self.display, 'go = ' + str(self.subMenuObj[i].menuIndex) + '-' + self.subMenuObj[i].title, 2)
             if isinstance(self.subMenuObj[i], ToggleOption):  # toggleoption 활성화
                 print('  >>  Status / ', self.subMenuObj[i].getstatus())
             else:
@@ -51,15 +52,9 @@ class Menu(object):
         for i in range(len(self.title) + 48):
             print("=", end='')
         print("\n0 - Back")
+        self.lcd_write(self.display, 'go = 0-Back    ', 2)
         for i in range(len(self.title) + 48):
             print("=", end='')
-
-        while True:
-            for i in range(self.subMenuObj.__len__()):
-                self.lcd_write(self.display, 'go = ' + self.subMenuObj[i].menuIndex + '-' + self.subMenuObj[i].title, 2)
-                time.sleep(1)
-            self.lcd_write(self.display, 'go = ' + '0-Back', 2)
-
 
 
 '''
