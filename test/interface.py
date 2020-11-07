@@ -77,6 +77,8 @@ def handleoption(cmd, men):
             return men.prevMenu
         else:   #men.is_top == True
             while True:
+                men.display.lcd_clear()
+                men.lcd_write(men.display, 'Quit program? Y/N>> ', 1)
                 ans = input('Quit program? Y/N>> ')
                 for words in ['N', 'n', 'Y', 'y']:
                     if ans in words:
@@ -91,6 +93,8 @@ def handleoption(cmd, men):
                 men.run()
                 return men
             else:
+                men.display.lcd_clear()
+                men.lcd_write(men.display, 'System off', 1)
                 sys.exit(1)
 
     else:
