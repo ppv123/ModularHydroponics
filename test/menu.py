@@ -57,15 +57,6 @@ class Menu(object):
             print("=", end='')
 
 
-'''
-    def menu_1902(self):
-        if self.disp1602mode in True:
-            #두줄씩 표시
-            #표시 못하고 넘어가는 내용은 임시저장
-            #키보드조작(다음으로 넘어갈때) 나머지 메뉴 표시
-'''
-
-
 class SubMenu(Menu):
     def __init__(self, title, index, prevmenu):
         super().__init__(title, index)
