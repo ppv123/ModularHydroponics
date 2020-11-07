@@ -57,7 +57,7 @@ def cmd_line(menusetup, **kwargs):
 
 
 def handleoption(cmd, men):
-    if cmd.isdecimal() and int(cmd) > 0:    #'cmd' 가 정수이고, 1이상인가
+    if cmd.isdecimal() and int(cmd) > 0:
         try:
             if isinstance(men.subMenuObj[int(cmd)-1], menu.ExecOption or menu.ExecOptionQ or menu.ToggleOption):
                 men.subMenuObj[int(cmd) - 1].run()
@@ -70,7 +70,7 @@ def handleoption(cmd, men):
             print('invalid submenu')
             return men
 
-    elif cmd.isdecimal() and int(cmd) == 0: #'cmd' 가 정수이고, 0인가
+    elif cmd.isdecimal() and int(cmd) == 0:
         if not men.is_top():
             print('back to prevmenu')
             men.prevMenu.run()
