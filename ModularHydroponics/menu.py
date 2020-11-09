@@ -3,7 +3,6 @@ import traceback
 import os
 
 
-
 class Menu(object):
     def __init__(self, title, index):
         self.title = title
@@ -12,12 +11,20 @@ class Menu(object):
         self.subMenuObj = []
 
     def run(self):
-        self.menu_listing()
+        self.menu_wrapper(self.lister)
 
     def istop(self):
         return self.title == self.prevMenu.title and self.menuIndex == self.prevMenu.menuIndex
 
-    def menu_listing(self):
+    def lister(self):
+        for i in range(self.subMenuObj.__len__()):
+            print(self.subMenuObj[i].menuIndex, ' - ', self.subMenuObj[i].title, end='')
+            if isinstance(self.subMenuObj[i], ToggleOption):
+                print('  >>  Status / ', self.subMenuObj[i].getstatus())
+            else:
+                print('')
+
+    def menu_wrapper(self, method, **kwargs):
         print('\n')
         for i in range(len(self.title) + 48):
             print("=", end='')
@@ -25,12 +32,8 @@ class Menu(object):
         for i in range(len(self.title) + 48):
             print("=", end='')
         print("")
-        for i in range(self.subMenuObj.__len__()):
-            print(self.subMenuObj[i].menuIndex, ' - ', self.subMenuObj[i].title, end='')
-            if isinstance(self.subMenuObj[i], ToggleOption):
-                print('  >>  Status / ', self.subMenuObj[i].getstatus())
-            else:
-                print('')
+
+        method(**kwargs)
 
         for i in range(len(self.title)+48):
             print("=", end='')
@@ -40,10 +43,15 @@ class Menu(object):
 
 
 class SubMenu(Menu):
-    def __init__(self, title, index, prevmenu):
+    def __init__(self, title, index, prevmenu, **kwargs):
         super().__init__(title, index)
         self.prevMenu = prevmenu
         prevmenu.subMenuObj.append(self)
+        self.lister = kwargs.pop('lister')
+        self.listkwargs = kwargs.pop('listkwargs')
+
+    def lister(self, **kwargs):
+        self.lister(**self.listkwargs)
 
 
 #single executable option

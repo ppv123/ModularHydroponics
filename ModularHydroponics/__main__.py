@@ -1,24 +1,29 @@
-from ModularHydroponics.ModularHydroponics import interface, menu, taskmanage#, modulecontrol
+from ModularHydroponics import interface, menu, taskmanage, modulecontrol
 import time
 import random
 
 
-def menu_setup(**kwargs):
+def setup(**kwargs):
     q = kwargs.pop('q')
     n = kwargs.pop('n')
     para1 = kwargs.pop('para1')
+    autoconq = taskmanage.OperationQueue(1)
+    modcon = modulecontrol.ModuleControl(1)
 
     #최상위
     mainMenu = menu.Menu("Main", 0)
-    controlMenu = menu.SubMenu("Control", 1, mainMenu)  #1
-    monMenu = menu.SubMenu("Monitoring", 2, mainMenu)   #2
-    #moduleMenu = menu.SubMenu("Module Status", 3, mainMenu) #3
+    initmod = menu.ExecOption("Initialize Modules", 1, mainMenu, function=modcon.initmodule)
+    controlMenu = menu.SubMenu("Control", 2, mainMenu)  #1
+    monMenu = menu.SubMenu("Monitoring", 3, mainMenu)   #2
 
     #1.control
     targetval = menu.ExecOption("Set target value", 1, controlMenu, function=testfunction, para1=para1)
     mancontrol = menu.SubMenu("Control Manually", 2, controlMenu)
     autocontrol = menu.ToggleOption("control mode", 3, controlMenu, function=startq, function2=stopq,
                                     opq=q, trueopt='Running', falseopt='Stopped')
+    setcontrol = menu.SubMenu("Control Manually", 4, controlMenu)
+
+    sensorstat = menu.ExecOption("Sensor Modules", 1, monMenu, function='')
 
     #2. monitoring
     sensorstat = menu.ExecOption("Sensor Modules", 1, monMenu, function='')
@@ -49,8 +54,8 @@ def stopq(**kwargs):
     opq.stop()
 
 
-autoconq = taskmanage.OperationQueue(1)
-interface.cmd_line(menu_setup, q=autoconq, para1='just for test', n=15)
+
+interface.cmd_line(setup, para1='just for test', n=15)
 
 
 '''

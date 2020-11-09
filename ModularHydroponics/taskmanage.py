@@ -17,10 +17,10 @@ class _Operation(threading.Thread):
 class OperationQueue:
     def __init__(self, numberOfConcurrentTask=1):
         self.queue = queue.Queue()
+        self.reservequeue = queue.Queue()
         self.sem = threading.Semaphore(numberOfConcurrentTask)
         self.t = ''
-        self.stopmainloop = False
-        self.stopaddloop = False
+        self.stoploop = False
 
     ## 작업 루프
     def mainloop(self):
@@ -28,34 +28,41 @@ class OperationQueue:
             oper = self.queue.get()
             self.sem.acquire()
             oper.start()
-            if self.stopmainloop:
+            if self.stoploop:
+                break
+
+    def mainloopinf(self):
+        while True:
+            if self.queue.empty():
+                self.queue = self.reservequeue
+            oper = self.queue.get()
+            self.sem.acquire()
+            oper.start()
+            if self.stoploop:
                 oper.join()
                 break
 
     def add(self, method, *args, **kwds):
         task = _Operation(self.sem, target=method, *args, **kwds)
         self.queue.put(task)
+        self.reservequeue.put(task)
 
-    def addloop(self, method, *args, **kwds):
-        while True:
-            task = _Operation(self.sem, target=method, *args, **kwds)
-            self.queue.put(task)
-            if self.stopaddloop:
-                break
-
-    def start(self, run_async=False):
-        self.t = threading.Thread(target=self.mainloop, daemon=True)
+    def start(self, run_async=False, infinite=False):
+        if infinite:
+            self.t = threading.Thread(target=self.mainloopinf, daemon=True)
+        else:
+            self.t = threading.Thread(target=self.mainloop, daemon=True)
         self.t.start()
-        if not run_async: # 옵션값에 따라 큐의 실행을 블럭킹으로 한다.
+        if not run_async:
             self.t.join()
 
     def stop(self):
         if self.t is not None:
-            self.stopmainloop = True
-            #self.t.join()
+            self.stoploop = True
 
     def flush(self):
-        self.queue.clear()
+        while not self.queue.empty():
+            self.queue.get()
 
 
 
