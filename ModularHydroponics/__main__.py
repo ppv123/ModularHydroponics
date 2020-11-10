@@ -1,4 +1,4 @@
-from ModularHydroponics import interface, menu, taskmanage, modulecontrol
+from ModularHydroponics import interface, menu, taskmanage, modulecontrol, gpiocontrol
 import time
 import random
 
@@ -7,7 +7,10 @@ def setup(**kwargs):
     q = kwargs.pop('q')
     n = kwargs.pop('n')
     para1 = kwargs.pop('para1')
+    gpiocontrol.gpio_setup()
+
     autoconq = taskmanage.OperationQueue(1)
+    senseconq = taskmanage.OperationQueue(1)
     modcon = modulecontrol.ModuleControl(1)
 
     #최상위
@@ -17,17 +20,21 @@ def setup(**kwargs):
     monMenu = menu.SubMenu("Monitoring", 3, mainMenu)   #2
 
     #1.control
-    targetval = menu.ExecOption("Set target value", 1, controlMenu, function=testfunction, para1=para1)
-    mancontrol = menu.SubMenu("Control Manually", 2, controlMenu)
-    autocontrol = menu.ToggleOption("control mode", 3, controlMenu, function=startq, function2=stopq,
-                                    opq=q, trueopt='Running', falseopt='Stopped')
-    setcontrol = menu.SubMenu("Control Manually", 4, controlMenu)
+    setcontrol = menu.ExecOptionList("Module Control Mode", 1, controlMenu, funcdic=modcon.getautomoddict(),
+                                     trueopt='Auto', falseopt='Manual', )
+    targetval = menu.ExecOption("Set target value", 2, controlMenu, function=modcon.settarget)
+    mancontrol = menu.ExecOptionList("Control Manually", 3, controlMenu)
 
-    sensorstat = menu.ExecOption("Sensor Modules", 1, monMenu, function='')
+    autocondic = {'run_async': True, 'infinite': True}
+    autocontrol = menu.ToggleOption("control mode", 4, controlMenu, function=autoconq.start, function2=autoconq.stop,
+                                    trueopt='Running', falseopt='Stopped', funcargs=autocondic)
+
+
 
     #2. monitoring
-    sensorstat = menu.ExecOption("Sensor Modules", 1, monMenu, function='')
-    actustat = menu.ExecOption("Actuator Modules", 2, monMenu, function='')
+    sensorconfig = menu.SubMenu("Sensor Configuration", 1, monMenu)
+    sensorstat = menu.ExecOption("Sensor Modules", 2, monMenu, function='')
+    actustat = menu.ExecOption("Actuator Modules", 3, monMenu, function='')
 
     return mainMenu
 
@@ -43,7 +50,7 @@ def somei2c_operation(**kwargs):
         print(i, end='')
         time.sleep(0.25)
 
-
+'''
 def startq(**kwargs):
     opq = kwargs['opq']
     opq.start(True)
@@ -52,7 +59,7 @@ def startq(**kwargs):
 def stopq(**kwargs):
     opq = kwargs['opq']
     opq.stop()
-
+'''
 
 
 interface.cmd_line(setup, para1='just for test', n=15)

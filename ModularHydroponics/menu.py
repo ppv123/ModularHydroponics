@@ -47,45 +47,54 @@ class SubMenu(Menu):
         super().__init__(title, index)
         self.prevMenu = prevmenu
         prevmenu.subMenuObj.append(self)
-        self.lister = kwargs.pop('lister')
-        self.listkwargs = kwargs.pop('listkwargs')
 
-    def lister(self, **kwargs):
-        self.lister(**self.listkwargs)
 
 
 #single executable option
 class ExecOption(SubMenu):
     def __init__(self, title, index, prevmenu, **kwargs):
         super().__init__(title, index, prevmenu)
-        self.function = kwargs.pop('function')
+        self.function = kwargs.pop('function', None)
         self.funcargs = kwargs
 
-    def opt_guide(self, str):
-        #Explanation will go here
-        print(str)
+    def opt_guide(self):
+        guide = self.funcargs.pop('optguide', None)
+        if guide:
+            print(guide)
 
     def run(self):
         try:
-            self.opt_guide('This is executable option for test')
-            self.function(**self.funcargs)
+            if self.function:
+                self.function(**self.funcargs)
 
         except:
             sys.stderr.write('executable option execution failed')
 
-#queued executable option
-class ExecOptionQ(ExecOption):
+class ExecOptionList(ExecOption):
     def __init__(self, title, index, prevmenu, **kwargs):
         super().__init__(title, index, prevmenu, **kwargs)
-        self.opq = kwargs.pop('opq')
+        self.funcdic = kwargs.pop('funcdic', None)      #{0: (func0, name, kwargs0), 1: (func1, name, kwargs1), ...}
+        self.trueopt = kwargs.pop('trueopt', 'On')
+        self.falseopt = kwargs.pop('falseopt', 'Off')
+        self.togglestat = list(None for i in range(len(self.funcdic)))
+
+    def lister(self):
+        if self.function:
+            self.function(**self.funcargs)
+        if self.funcdic:
+            for index in range(len(self.funcdic)):
+                print(index, '-', self.funcdic[index][1], ' ', self.funcdic[index][0].__name__, end='')
+                if self.togglestat[index] is not None:
+                    if self.togglestat[index]:
+                        stat = self.trueopt
+                    else:
+                        stat = self.falseopt
+                    print('>>', stat)
+                else:
+                    print('')
 
     def run(self):
-        try:
-            print()
-            self.opq.add(self.function, **self.funcargs)
-            print(self.opq.queue.qsize())
-        except:
-            sys.stderr.write('executable option execution failed')
+        self.menu_wrapper(self.lister)
 
 
 class ToggleOption(ExecOption):
@@ -95,9 +104,9 @@ class ToggleOption(ExecOption):
         self.function2 = kwargs.pop('function2')
         self.trueopt = kwargs.pop('trueopt', 'On')
         self.falseopt = kwargs.pop('falseopt', 'Off')
+        self.funcargs = kwargs.pop('funcargs')
 
     def run(self):
-        self.opt_guide('This is executable option for test')
         try:
             if self.toggleStatus is False:
                 try:
@@ -126,6 +135,5 @@ class ToggleOption(ExecOption):
             return self.trueopt
         else:
             return self.falseopt
-
 
 

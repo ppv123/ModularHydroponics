@@ -47,7 +47,9 @@ class OperationQueue:
         self.queue.put(task)
         self.reservequeue.put(task)
 
-    def start(self, run_async=False, infinite=False):
+    def start(self, **kwargs):
+        run_async = kwargs.pop('run_async', False)
+        infinite = kwargs.pop('infinite', False)
         if infinite:
             self.t = threading.Thread(target=self.mainloopinf, daemon=True)
         else:
