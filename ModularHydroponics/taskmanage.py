@@ -3,8 +3,9 @@ import queue
 
 
 class _Operation(threading.Thread):
-    def __init__(self, sem, *args, **kwds):
+    def __init__(self, sem, qsem, *args, **kwds):
         self.sem = sem
+        self.qsem = qsem
         self.method = kwds.pop('target')
         super().__init__(target=self.wrappedTarget, args=args, kwargs=kwds, daemon=True)
 
@@ -12,13 +13,15 @@ class _Operation(threading.Thread):
         self.method(**kwds)
         if isinstance(self.sem, threading.Semaphore):
             self.sem.release()
+            self.qsem.release()
 
 
 class OperationQueue:
-    def __init__(self, numberOfConcurrentTask=1):
+    def __init__(self, numberOfConcurrentTask=1, qsem=None):
         self.queue = queue.Queue()
         self.reservequeue = queue.Queue()
         self.sem = threading.Semaphore(numberOfConcurrentTask)
+        self.qsem = qsem
         self.t = ''
         self.stoploop = False
 
@@ -26,6 +29,7 @@ class OperationQueue:
     def mainloop(self):
         while True:
             oper = self.queue.get()
+            self.qsem.acquire()
             self.sem.acquire()
             oper.start()
             if self.stoploop:
@@ -43,7 +47,7 @@ class OperationQueue:
                 break
 
     def add(self, method, *args, **kwds):
-        task = _Operation(self.sem, target=method, *args, **kwds)
+        task = _Operation(self.sem, self.qsem, target=method, *args, **kwds)
         self.queue.put(task)
         self.reservequeue.put(task)
 

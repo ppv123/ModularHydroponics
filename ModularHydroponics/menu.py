@@ -104,7 +104,7 @@ class ToggleOption(ExecOption):
         self.function2 = kwargs.pop('function2')
         self.trueopt = kwargs.pop('trueopt', 'On')
         self.falseopt = kwargs.pop('falseopt', 'Off')
-        self.funcargs = kwargs.pop('funcargs')
+        self.funcargs = kwargs
 
     def run(self):
         try:

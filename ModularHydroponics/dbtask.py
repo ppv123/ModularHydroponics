@@ -13,7 +13,8 @@ class DBtask(object):
 
             sql = 'insert into condition_plantconditions (plant_id, hum, lux, ph, temp, timestamp) values (?,?,?,?,?,?)'
             now = datetime.datetime.now()
-            cursor.execute(sql, (kwargs.pop('plant_id', ''), kwargs.pop('hum', 0), kwargs.pop('lux', 0), kwargs.pop('ph',0), kwargs.pop('temp',0), now))
+            cursor.execute(sql, (kwargs.pop('plant_id', ''), kwargs.pop('hum', None), kwargs.pop('lux', None),
+                                 kwargs.pop('ph', None), kwargs.pop('temp', None), now))
             self.conn.commit()
 
         except:
