@@ -1,0 +1,75 @@
+#include <Wire.h>
+#define SLAVE_ADDRESS 0x12
+#define PUMP1 A1
+#define PUMP2 A2
+
+int number = 0;
+int state = 0;
+int instr_number;
+void setup(void) {
+  pinMode(PUMP1, OUTPUT);
+  pinMode(PUMP2, OUTPUT);
+  digitalWrite(PUMP1,LOW);
+  digitalWrite(PUMP2,LOW);
+  analogWrite(A7, 255);
+  analogWrite(A7, 0);
+  Wire.begin(SLAVE_ADDRESS);
+  Wire.onReceive(instrNum);
+}
+  
+void loop(){
+}
+void instrNum(int instr_number){
+  while(Wire.available()){
+    instr_number = Wire.read();
+    if (instr_number == 1){
+    sendType();
+  }
+  else if (instr_number == 2){
+    unsigned long preMillis = 0;
+    unsigned long curMillis = millis();
+    if((preMillis >0)&&(curMillis - preMillis >3000)){
+      preMillis = curMillis;
+      on();
+      state = 1;
+      return state;
+    }
+    digitalWrite(PUMP1,LOW);
+    digitalWrite(PUMP2,LOW);
+    state = 0;
+    return state;
+  }
+  else if (instr_number == 3){
+    unsigned long preMillis = 0;
+    unsigned long curMillis = millis();
+    if((preMillis >0)&&(curMillis - preMillis >3000)){
+      preMillis = curMillis;
+      off();
+      state = 1;
+      return state;
+    }
+    digitalWrite(PUMP1,LOW);
+    digitalWrite(PUMP2,LOW);
+    state = 0;
+    return state;
+  }
+  else if (instr_number == 4){
+    Wire.onRequest(State);
+  }
+  }
+}
+void sendType(){
+  int type = 2;
+  Wire.write((int)type);
+}
+void on(){
+  digitalWrite(PUMP1, HIGH);
+  digitalWrite(PUMP2, LOW);
+}
+void off(){
+  digitalWrite(PUMP1, LOW);
+  digitalWrite(PUMP2, HIGH);
+}
+void State(){
+  Wire.write((int)state);
+}
