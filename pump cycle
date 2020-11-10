@@ -1,0 +1,43 @@
+#include <Wire.h>
+#define SLAVE_ADDRESS 0x14
+#define PUMP A1
+
+int number = 0;
+int state = 0;
+int instr_number;
+void setup(void) {
+  pinMode(PUMP, OUTPUT);
+  digitalWrite(PUMP,LOW);
+  analogWrite(A7, 255);
+  analogWrite(A7, 0);
+  Wire.begin(SLAVE_ADDRESS);
+  Wire.onReceive(instrNum);
+  on();
+}
+  
+void loop(){
+}
+void instrNum(int instr_number){
+  while(Wire.available()){
+    instr_number = Wire.read();
+    if (instr_number == 1){
+    sendType();
+  }
+  else if (instr_number == 2){
+    on();
+  }
+  else if (instr_number == 3){
+    off();
+  }
+  }
+}
+void sendType(){
+  int type = 2;
+  Wire.write((int)type);
+}
+void on(){
+  digitalWrite(PUMP, HIGH);
+}
+void off(){
+  digitalWrite(PUMP, LOW);
+}
