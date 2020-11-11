@@ -1,4 +1,4 @@
-import GPIO
+import RPi.GPIO as GPIO
 import subprocess
 
 def restart(): #Raspberry Pi 재부팅 코드

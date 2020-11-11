@@ -5,8 +5,6 @@ import random
 
 
 def setup(**kwargs):
-    q = kwargs.pop('q')
-    n = kwargs.pop('n')
     gpiocontrol.gpio_setup()
 
     qsem = threading.Semaphore(1)

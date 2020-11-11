@@ -9,6 +9,8 @@ class ModuleControl(object):
     targetData = {}
     modulenest = {}
     autocon = {}
+    sensors = []
+    currentdata = {}
 
     def __init__(self, busnum):
         self.bus = smbus.SMBus(busnum)
@@ -31,6 +33,7 @@ class ModuleControl(object):
 
         for key in self.modulenest.keys():
             self.initautocon(key)
+            self.initsensor(key)
 
     def findmeta(self, address):
         filt = (self.df['address'] == address)
@@ -55,6 +58,11 @@ class ModuleControl(object):
             if value[1] == self.modulenest[address][1] and value[0] != address:
                 self.autocon[address] = False
 
+    def initsensor(self, address):
+        for value in self.modulenest.values():
+            if value[1] == 'sensor':
+                self.sensors.append(value[0])
+
     def settarget(self):
         if self.autocon:
             for key in self.autocon.keys():
@@ -74,7 +82,9 @@ class ModuleControl(object):
             opq.flush()
             for key, value in self.autocon:
                 if value:
-                    opq.add(method=self.actmodule_man, address=key)
+                    #find control model by address
+                    #wrap actuate with control model, add wrapped function
+                    opq.add(method='', address=key)
         except:
             pass
 
@@ -88,6 +98,15 @@ class ModuleControl(object):
                 dict[index] = (self.actmodule_man, key, {'address': key})
         return dict
 
+    def senseall(self, **kwargs):
+        opq = kwargs.pop('opq', None)
+        try:
+            opq.flush()
+            for i in range(len(self.sensors)):
+                opq.add(self.actmodule_man, address=self.sensors[i])
+        except:
+            pass
+
     def actmodule_man(self, **kwargs):
         actusign = kwargs.pop('actusign')
         address = kwargs.pop('address')
@@ -98,7 +117,7 @@ class ModuleControl(object):
                 return self.bus.read_byte(address)
             elif self.modulenest[address][2] == 'actuator':
                 if actusign:
-                    self.bus.write_byte(address, int(self.modulenest[address][3]))
+                    self.bus.write_byte(address, int(self.modulenest[address][3])) # increasing(+) way
                     #return self.bus.read_byte(address) #actuator 실행하고 상태 반환받음 좋겠다.
                 else:
                     self.bus.write_byte(address, int(self.modulenest[address][3])) #3 -> something else
