@@ -1,53 +1,40 @@
 import sys
 import os
-#from ModularHydroponics.ModularHydroponics
-import menu
+import post_menu
+import time
+import lcddriver
+import keypaddriver
 
-'''
-시간나면 Inquirer 써서 해볼수도
-def handleoption(cmd, men):
-    if cmd.isdecimal() and int(cmd) > 0:
-        try:
-            if isinstance(men.subMenuObj[int(cmd)-1], menu.ExecOption) or isinstance(men.subMenuObj[int(cmd)-1], menu.ToggleOption):
-                men.subMenuObj[int(cmd) - 1].run()
-                men.run()
-                return men
-            else:
-                men.subMenuObj[int(cmd) - 1].run()
-                return men.subMenuObj[int(cmd) - 1]
-        except:
-            print('invalid submenu')
-            return men
-    elif cmd.isdecimal() and int(cmd) == 0:
-        if not men.is_top():
-            print('back to prevmenu')
-            men.prevMenu.run()
-            return men.prevMenu
-        else:
-            while True:
-                ans = input('Quit program? Y/N>> ')
-                for words in ['N', 'n', 'Y', 'y']:
-                    if ans in words:
-                        out = True
-                        break
-                    else:
-                        out = False
-                if out:
-                    break
-            if (ans in 'N') or (ans in 'n'):
-                men.run()
-                return men
-            else:
-                sys.exit(1)
-    else:
-        return men
-'''
+display = lcddriver.lcd()
+button = keypaddriver.keypad()
+
+
 def cmd_line(menusetup, **kwargs):
+    global instN
     currentmenu = menusetup(**kwargs)
     currentmenu.run()
+    i = 0
     while True:
-        os.system('cls')
-        cmd = input('\nSelect> ')
+        # os.system('cls')
+        #cmd = input('\nSelect> ')
+        while len(currentmenu.subMenuObj)+1 > i:
+            if len(currentmenu.subMenuObj)+1 == i:
+                i = 0
+                continue
+
+            if i == 0:
+                display.lcd_long_write(display, '0-Back', 2)
+
+            if i != 0:
+                display.lcd_long_write(display, '>' + str(currentmenu.title[i-1].menuIndex) + '-' + currentmenu.subMenuObj[i-1].title, 2)
+            putB = button.key_input()
+            if putB:
+                i += 1
+            elif not putB:
+                cmd = str(i)
+                break
+
+
         try:
             currentmenu = handleoption(cmd, currentmenu)
 
@@ -57,9 +44,9 @@ def cmd_line(menusetup, **kwargs):
 
 
 def handleoption(cmd, men):
-    if cmd.isdecimal() and int(cmd) > 0:
+    if cmd.isdecimal() and int(cmd) > 0:  # 'cmd' 가 정수이고, 1이상인가
         try:
-            if isinstance(men.subMenuObj[int(cmd)-1], menu.ExecOption or menu.ExecOptionQ or menu.ToggleOption):
+            if isinstance(men.subMenuObj[int(cmd) - 1], post_menu.ExecOption or post_menu.ExecOptionQ or post_menu.ToggleOption):
                 men.subMenuObj[int(cmd) - 1].run()
                 men.run()
                 return men
@@ -70,16 +57,27 @@ def handleoption(cmd, men):
             print('invalid submenu')
             return men
 
-    elif cmd.isdecimal() and int(cmd) == 0:
+    elif cmd.isdecimal() and int(cmd) == 0:  # 'cmd' 가 정수이고, 0인가
         if not men.is_top():
             print('back to prevmenu')
             men.prevMenu.run()
             return men.prevMenu
-        else:   #men.is_top == True
+        else:  # men.is_top == True
             while True:
-                men.display.lcd_clear()
-                men.lcd_write(men.display, 'Quit program? Y/N>> ', 1)
-                ans = input('Quit program? Y/N>> ')
+                # ans = input('Quit program? Y/N>> ')
+                display.lcd_clear()
+                display.lcd_write(display, 'Quit program? Y/N>> ', 1)
+                putB = button.key_input()
+                if putB == 0:
+                    display.lcd_long_write(display, 'system off', 2)
+                    time.sleep(1)
+                    display.lcd_clear()
+                    ans = 'y'
+                elif putB != 0:
+                    display.lcd_long_write(display, 'go to menu', 2)
+                    time.sleep(1)
+                    ans = 'n'
+
                 for words in ['N', 'n', 'Y', 'y']:
                     if ans in words:
                         out = True
@@ -93,8 +91,6 @@ def handleoption(cmd, men):
                 men.run()
                 return men
             else:
-                men.display.lcd_clear()
-                men.lcd_write(men.display, 'System off', 1)
                 sys.exit(1)
 
     else:
