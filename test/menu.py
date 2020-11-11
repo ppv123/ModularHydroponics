@@ -1,9 +1,8 @@
 import sys
 import traceback
-import LCD_driver
-import time
-
 import os
+import lcddriver
+import keypaddriver
 
 
 class Menu(object):
@@ -12,55 +11,54 @@ class Menu(object):
         self.menuIndex = index
         self.prevMenu = self
         self.subMenuObj = []
-        self.display = LCD_driver.lcd()
-
-    def lcd_write(self, display, text='', num_line=1, num_cols=15):
-        if (len(text) > num_cols):
-            display.lcd_display_string(text[:num_cols], num_line)
-            for i in range(len(text) - num_cols + 1):
-                text_to_print = text[i:i + num_cols]
-                display.lcd_display_string(text_to_print, num_line)
-                time.sleep(0.1)
-            time.sleep(1)
-        else:
-            display.lcd_display_string(text, num_line)
+        self.display = lcddriver.lcd()
+        self.button = keypaddriver.keypad()
 
     def run(self):
-        self.menu_listing()
+        self.menu_wrapper(self.lister)
 
-    def is_top(self):
+    def istop(self):
         return self.title == self.prevMenu.title and self.menuIndex == self.prevMenu.menuIndex
 
-    def menu_listing(self):
+    def lister(self):
+        for i in range(self.subMenuObj.__len__()):
+            print(self.subMenuObj[i].menuIndex, ' - ', self.subMenuObj[i].title, end='')
+            if isinstance(self.subMenuObj[i], ToggleOption):
+                print('  >>  Status / ', self.subMenuObj[i].getstatus())
+            else:
+                print('')
+
+    def menu_wrapper(self, method, **kwargs):
         print('\n')
         for i in range(len(self.title) + 48):
             print("=", end='')
         print("\n", self.title)
         self.display.lcd_clear()
-        self.lcd_write(self.display, self.title, 1)
+        self.display.lcd_long_write(self.display, self.title, 1)
         for i in range(len(self.title) + 48):
             print("=", end='')
         print("")
-        for i in range(self.subMenuObj.__len__()):
-            print(self.subMenuObj[i].menuIndex, ' - ', self.subMenuObj[i].title, end='')
-            self.lcd_write(self.display, 'go = ' + str(self.subMenuObj[i].menuIndex) + '-' + self.subMenuObj[i].title, 2)
-            if isinstance(self.subMenuObj[i], ToggleOption):  # toggleoption 활성화
-                print('  >>  Status / ', self.subMenuObj[i].getstatus())
-            else:
-                print('')
+
+        method(**kwargs)
+
         for i in range(len(self.title) + 48):
             print("=", end='')
         print("\n0 - Back")
-        self.lcd_write(self.display, 'go = 0-Back    ', 2)
+        self.display.lcd_long_write(self.display, 'go = 0-Back    ', 2)
         for i in range(len(self.title) + 48):
             print("=", end='')
 
 
 class SubMenu(Menu):
-    def __init__(self, title, index, prevmenu):
+    def __init__(self, title, index, prevmenu, **kwargs):
         super().__init__(title, index)
         self.prevMenu = prevmenu
         prevmenu.subMenuObj.append(self)
+        self.lister = kwargs.pop('lister')
+        self.listkwargs = kwargs.pop('listkwargs')
+
+    def lister(self, **kwargs):
+        self.lister(**self.listkwargs)
 
 
 # single executable option
@@ -78,7 +76,6 @@ class ExecOption(SubMenu):
         try:
             self.opt_guide('This is executable option for test')
             self.function(**self.funcargs)
-            self.lcd_write(self.display, 'ExecOp', 2)
 
         except:
             sys.stderr.write('executable option execution failed')
