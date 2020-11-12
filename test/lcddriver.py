@@ -112,11 +112,14 @@ class lcd:
 
     def lcd_long_write(self, display, text='', num_line=1, num_cols=15):
         if len(text) > num_cols:
+            time.sleep(0.1)
             display.lcd_display_string(text[:num_cols], num_line)
+            time.sleep(0.9)
             for i in range(len(text) - num_cols + 1):
                 text_to_print = text[i:i + num_cols]
                 display.lcd_display_string(text_to_print, num_line)
-                time.sleep(0.1)
+                time.sleep(0.01)
             time.sleep(1)
         else:
+            display.lcd_display_string('               ', num_line)
             display.lcd_display_string(text, num_line)
