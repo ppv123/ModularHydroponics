@@ -32,6 +32,7 @@ def cmd_line(menusetup, **kwargs):
                 i += 1
             elif not putB:
                 cmd = str(i)
+                i = 0
                 break
 
 
