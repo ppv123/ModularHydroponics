@@ -1,6 +1,6 @@
 import sys
 import os
-import post_menu
+import menu
 import time
 import lcddriver
 import keypaddriver
