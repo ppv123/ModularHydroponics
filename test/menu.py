@@ -44,7 +44,6 @@ class Menu(object):
         for i in range(len(self.title) + 48):
             print("=", end='')
         print("\n0 - Back")
-        self.display.lcd_long_write(self.display, 'go = 0-Back    ', 2)
         for i in range(len(self.title) + 48):
             print("=", end='')
 
