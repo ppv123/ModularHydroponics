@@ -47,10 +47,14 @@ def cmd_line(menusetup, **kwargs):
 def handleoption(cmd, men):
     if cmd.isdecimal() and int(cmd) > 0:  # 'cmd' 가 정수이고, 1이상인가
         try:
-            if isinstance(men.subMenuObj[int(cmd) - 1], post_menu.ExecOption or post_menu.ExecOptionQ or post_menu.ToggleOption):
+            if isinstance(men.subMenuObj[int(cmd) - 1], menu.ExecOption or menu.ToggleOption):
                 men.subMenuObj[int(cmd) - 1].run()
                 men.run()
                 return men
+            elif isinstance(men, menu.ExecOptionList):
+                stat = men.funcdic[int(cmd) - 1][0](men.funcdic[int(cmd) - 1][2])
+                if stat is not None:
+                    men.togglestat[int(cmd) - 1] = stat
             else:
                 men.subMenuObj[int(cmd) - 1].run()
                 return men.subMenuObj[int(cmd) - 1]
