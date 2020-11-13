@@ -3,7 +3,11 @@ import time
 import pandas as pd
 import RPi.GPIO as GPIO
 import dbtask
+import lcddriver
+import keypaddriver
 
+display = lcddriver.lcd()
+button = keypaddriver.keypad()
 
 class ModuleControl(object):
     targetData = {}
@@ -39,12 +43,12 @@ class ModuleControl(object):
         filt = (self.df['address'] == address)
         meta = self.df[filt]
         data = [tuple([y for y in x]) for x in meta.values]
-        self.modulenest[address] = data
+        self.modulenest[address] = data[0]
 
     def isvalidmodule(self, address):
         try:
             self.bus.write_byte(address, 0)
-            return True
+            return Truec
 
         except:
             self.modulenest.pop(address)
@@ -55,18 +59,46 @@ class ModuleControl(object):
 
     def initautocon(self, address):   #autocon에 존재-> 자동모드 가능,key: 주소, value: 해당 모듈자동모드 설정 여부
         for value in self.modulenest.values():
-            if value[1] == self.modulenest[address][1] and value[0] != address:
+            if value[1] == self.modulenest[address][1] and value[0] != address and value[0] != 'actuator':
                 self.autocon[address] = False
+                #return
 
     def initsensor(self, address):
-        for value in self.modulenest.values():
+        for value in self.modulenest.values():c
             if value[1] == 'sensor':
                 self.sensors.append(value[0])
 
     def settarget(self):
         if self.autocon:
             for key in self.autocon.keys():
-                self.targetData[key] = input("category => Value: ".format(category=self.modulenest[key][1]))
+                #self.targetData[key] = input("category => Value: ".format(category=self.modulenest[key][1]))
+                display.lcd_clear()
+                display.lcd_long_write(display, self.modulenest[key][1] + ' : ', 1)
+                
+                count = 0
+                while True:
+                    putB = button.key_input()
+                    if putB:
+                        time.sleep(0.5)
+                        count += 1
+                        display.lcd_long_write(display, str(count), 2)
+                        while True:
+                            putB = button.key_input()
+                            if putB:
+                                time.sleep(0.001)
+                                count += 1
+                                display.lcd_long_write(display, str(count), 2)
+                            elif not putB:
+                                time.sleep(0.001)
+                                break
+                            
+                    break
+                
+                display.lcd_long_write(display, ' want ' + self.modulenest[key][1] + ' is', 1)
+                display.lcd_long_write(display, str(count), 2)
+                time.sleep(1)
+                self.targetData[key] = count
+                ##
 
     def toggleauto(self, **kwargs):
         address = kwargs.pop('address', None)
