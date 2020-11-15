@@ -1,6 +1,6 @@
 import smbus
 import time
-#from time import sleep
+
 import pandas as pd
 import RPi.GPIO as GPIO
 import dbtask
@@ -177,15 +177,6 @@ class ModuleControl(object):
             print('invalid module')
 
     def checkvalue(self):
-        '''
-        display.lcd_long_write(display, 'frequency setting', 1)
-        time.sleep(1)
-        self.sensorfq = self.counting()
-        display.lcd_clear()
-        display.lcd_long_write(display, 'frequency :', 1)
-        display.lcd_long_write(display, str(self.sensorfq), 2)
-        time.sleep(1)
-        '''
         display.lcd_clear()
         #display.lcd_long_write(display, str(self.autocon), 1)
         display.lcd_long_write(display, str(self.autocon), 1)
@@ -231,81 +222,3 @@ class ModuleControl(object):
                 time.sleep(1)
                 self.targetData[key] = count
             
-'''
-nod = ModuleControl(1)
-nod.initmodule()
-print(nod.autocon)
-nod.getmodulemode(mode = False)
-print(nod.autocon)
-print(nod.targetData)
-'''
-'''
-print(bool(nod.autocon))
-adr=[]
-for key in nod.autocon.keys():#address str
-    if nod.autocon[key]: # True True
-        adr.append(key)
-print(adr)
-
-for i in adr:
-    print('a')
-nod.settarget()
-
-
-if nod.autocon:
-            for key, value in nod.autocon.items():
-                #if not value:
-                if value != True:
-'''
-'''
-modulenest = {'0x08': ('0x08', 'ph','sensor',None,None,None, 0x02),
-              '0x10': ('0x10', 'ph','actuator',0x02,'linear',0x04, None),
-              '0x06': ('0x06', 'wq','sensor',None,None,None, 0x02),
-              '0x04': ('0x04', 'led','actuator',0x02,'linear',0x04, None),
-              '0x12': ('0x12', 'led','sensor',None,None,None, 0x02)}
-
-
-autocon = {}
-
-def test(modulenest):
-    for key in modulenest.keys():
-        print(key)
-        for value in modulenest.values():#{'0x10': ('0x10', 'ph','actuator',0x02,'linear',0x04)}
-            print(value[1] + modulenest[key][1] + ' ' + value[0] + key)
-            if value[1] == modulenest[key][1] and value[0] != key and value[2] == 'actuator':
-                autocon[key] = False
-                
-
-
-test(modulenest)
-
-print(autocon)
-'''
-
-'''
-targetData = {}
-'''
-
-
-#if nod.autocon:
- #   for key in nod.autocon.keys():
- #       nod.targetData[key] = input("category => Value: ".format(category=nod.modulenest[key][1]))
-
-
-#print(nod.targetData)
-#print(nod.autocon)
-
-'''
-modcon = ModuleControl(1)
-modcon.autocon = autocon
-#mode = kwargs.pop('mode', False)
-dit = {}
-for index, (key, value) in enumerate(autocon.items()):
-    if value is False:
-        dit[index] = (modcon.toggleauto(address=key), key, {'address': key})
-    #else:
-        #dit[index] = (modcon.actmodule_man(), key, {'address': key})
-
-print(dit)
-print(autocon)
-'''
