@@ -18,20 +18,12 @@ def setup(**kwargs):
     monMenu = menu.SubMenu("Monitoring", 3, mainMenu)
 
     #1.control
-    '''
-    setcontrol = menu.ExecOptionList("Module Control Mode", 1, controlMenu, funcdic=modcon.getmodulemode(), mode=True,
-                                     trueopt='Auto', falseopt='Manual')
-    refreshq = menu.ExecOption("Refresh Auto Queue", 2, controlMenu, function=modcon.initautoQ, opq=autoconq)
-    mancontrol = menu.ExecOptionList("Control Manually", 3, controlMenu, funcdic=modcon.getmodulemode(), mode=False)
-    '''
-#==================================================
     funcdic1 = modcon.getmodulemode(mode = False)#True)
     setcontrol = menu.ExecOptionList("Module Control Mode", 1, controlMenu, funcdic=funcdic1,
                                      trueopt='Auto', falseopt='Manual')
     refreshq = menu.ExecOption("Refresh Auto Queue", 2, controlMenu, function=modcon.initautoQ, opq=autoconq)
     funcdic2 = modcon.getmodulemode(mode = True)#False
     mancontrol = menu.ExecOptionList("Control Manually", 3, controlMenu, funcdic=funcdic2)
-#==================================================
     
     targetval = menu.ExecOption("Set target value", 4, controlMenu, function=modcon.settarget)
     autocondic = {'run_async': True, 'infinite': True}
