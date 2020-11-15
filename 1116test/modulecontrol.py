@@ -28,26 +28,16 @@ class ModuleControl(object):
         
 
     def initmodule(self):
-        '''
         for addr in range(128):
             self.bus.write_byte(addr, 0)
             try:
                 self.findmeta(addr)#(addr)
-
             except:
                 print('unknown module')
                 if input('Add unknow module? Y/N') == 'Y':
                     meta = (addr, 'unknown', None, None, None, None)
                     self.modulenest.setdefault(addr)
                     self.modulenest[addr] = meta
-        '''
-        self.findmeta('0x01')
-        self.findmeta('0x02')
-        self.findmeta('0x03')
-        self.findmeta('0x04')
-        self.findmeta('0x05')
-        self.findmeta('0x06')
-        self.findmeta('0x07')
         
         for key in self.modulenest.keys():
             self.initautocon(key)
