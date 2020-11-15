@@ -39,9 +39,9 @@ def setup(**kwargs):
                                     trueopt='Running', falseopt='Stopped', funcargs=autocondic)
 
     #2. monitoring
-    sensorconfig = menu.SubMenu("Sensor Configuration", 1, monMenu)
-    sensorstat = menu.ExecOption("Sensor Modules", 2, monMenu, function='')
-    actustat = menu.ExecOption("Actuator Modules", 3, monMenu, function='')
+    sensorconfig = menu.ExecOption("Sensor Configuration", 1, monMenu, function=modcon.initfrequency)
+    sensorstat = menu.ExecOption("Sensor Modules", 2, monMenu, function=modcon.viewsensingdata)
+    actustat = menu.ExecOption("Actuator Modules", 3, monMenu, function=modcon.viewactingdata)
 
     return mainMenu
 
