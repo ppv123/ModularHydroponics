@@ -2,7 +2,7 @@ import interface, menu, taskmanage, modulecontrol, gpiocontrol
 import threading
 import time
 import random
-#from multiprocessing import Process
+
 
 modcon = modulecontrol.ModuleControl(1) #up from line17
 
@@ -32,7 +32,3 @@ def setup(**kwargs):
 
 
 interface.cmd_line(setup, para1 = 'just for test', n=15)
-
-
-#Process(target=interface.cmd_line, args=(setup,)).start()
-#Process(target=modcon.controlmod).start()
